@@ -46,6 +46,7 @@ RUN apt-get update && \
 RUN chown -R www-data:www-data /var/www/html
 
 COPY ./config/horizon.conf /etc/supervisor/conf.d/horizon.conf
+COPY ./config/socket.conf /etc/supervisor/conf.d/socket.conf
 COPY ./mods-available/xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 COPY ./docker-entrypoint.sh /usr/local/bin/docker-entrypoint
 RUN chmod +x /usr/local/bin/docker-entrypoint
