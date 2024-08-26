@@ -11,4 +11,4 @@ Route::withoutMiddleware(['auth:sanctum'])
 	});
 
 Route::get('files/{file}', [FileController::class, 'show']);
-Route::post('files/{file}/generate', [FileController::class, 'runFileGeneration']);
+Route::post('files', [FileController::class, 'runFileGeneration']);
