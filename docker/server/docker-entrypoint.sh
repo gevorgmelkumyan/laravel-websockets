@@ -13,7 +13,6 @@ done
 if [ $ATTEMPTS_LEFT_TO_REACH_DATABASE -eq 0 ]; then
 	echo "Failed to connect to the database:"
 	echo "$DATABASE_ERROR"
-	exit 1
 else
 	echo "The database is ready and reachable"
 fi
@@ -30,6 +29,9 @@ else
 fi
 
 chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+php artisan migrate
+php artisan db:seed
 
 source ~/.nvm && npm i
 
