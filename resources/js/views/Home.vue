@@ -9,6 +9,7 @@ let echo = null
 let channel = null
 
 const loading = ref(false)
+const disableStart = ref(false)
 const fileUrl = ref(null)
 const showProgressBar = ref(false)
 const progress = ref(0)
@@ -32,10 +33,11 @@ const initSocket = () => {
 
 		channel = echo
 			.private('lw.' + JSON.parse(localStorage.getItem('user')).id)
-			.listen('.file-update-event', (data) => {
-				progress.value = data.progress
-				if (data.file_url) {
-					fileUrl.value = data.file_url
+			.listen('.file-updated-event', (data) => {
+				progress.value = Math.ceil((data.file.generated / data.file.total) * 100)
+				if (data.file.url) {
+					fileUrl.value = data.file.url
+					disableStart.value = false
 				}
 			})
 	}
@@ -54,6 +56,7 @@ const start = () => {
 		.then(response => {
 			loading.value = false
 			showProgressBar.value = true
+			disableStart.value = true
 		})
 		.catch(error => {
 			loading.value = false
@@ -80,6 +83,7 @@ onBeforeMount(() => {
                     @click="start"
                     color="primary"
                     :loading="loading"
+                    :disabled="disableStart"
                 >
                     Start
                 </v-btn>
@@ -92,7 +96,9 @@ onBeforeMount(() => {
                     v-model="progress"
                     color="green"
                     height="25"
-                />
+                >
+	                <strong>{{ progress }}%</strong>
+                </v-progress-linear>
             </v-col>
         </v-row>
 
