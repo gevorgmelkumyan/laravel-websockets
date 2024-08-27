@@ -34,7 +34,19 @@ class File extends Model {
 		'generated',
 	];
 
+	protected $appends = [
+		'url',
+	];
+
 	public function user(): BelongsTo {
 		return $this->belongsTo(User::class);
+	}
+
+	public function getUrlAttribute(): ?string {
+		if ($this->status !== self::STATUS_GENERATED) {
+			return null;
+		}
+
+		return url('storage/' . $this->path);
 	}
 }

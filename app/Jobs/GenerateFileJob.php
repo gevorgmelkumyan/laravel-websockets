@@ -62,6 +62,8 @@ class GenerateFileJob implements ShouldQueue {
 			}
 
 			if ($generated % 1200 === 0) {
+				$this->file->generated = $generated;
+				$this->file->saveOrFail();
 				event(new FileUpdatedEvent($this->user->id, $this->file));
 			}
 		}

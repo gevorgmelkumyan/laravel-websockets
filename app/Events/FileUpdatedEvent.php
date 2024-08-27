@@ -15,8 +15,8 @@ use Illuminate\Queue\SerializesModels;
 class FileUpdatedEvent implements ShouldBroadcastNow {
 	use Dispatchable, InteractsWithSockets, SerializesModels;
 
-	protected $userId;
-	protected $file;
+	public $userId;
+	public $file;
 
 	public function __construct(int $userId, File $file) {
 		$this->userId = $userId;

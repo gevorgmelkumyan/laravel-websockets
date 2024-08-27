@@ -1,20 +1,59 @@
 <script setup>
 import axios from "axios"
 import { VBtn } from "vuetify/components"
-import { VContainer, VRow, VCol, VFileInput, VTable, VChip, VSkeletonLoader } from "vuetify/components"
+import { VContainer, VRow, VCol, VProgressLinear } from "vuetify/components"
 import {onBeforeMount, ref} from "vue"
+import Echo from "laravel-echo"
+
+let echo = null
+let channel = null
 
 const loading = ref(false)
 const fileUrl = ref(null)
+const showProgressBar = ref(false)
 const progress = ref(0)
 
+const initSocket = () => {
+	if (!echo) {
+		echo = new Echo({
+			authEndpoint: '/broadcasting/auth',
+			auth: {
+				headers: {
+					'Authorization': `Bearer ${localStorage.getItem('token')}`,
+					'Accept': 'application/json'
+				}
+			},
+			broadcaster: 'pusher',
+			key: import.meta.env.VITE_PUSHER_APP_KEY,
+			wsHost: import.meta.env.VITE_PUSHER_HOST,
+			wsPort: import.meta.env.VITE_PUSHER_PORT,
+			forceTLS: false
+		})
+
+		channel = echo
+			.private('lw.' + JSON.parse(localStorage.getItem('user')).id)
+			.listen('.file-update-event', (data) => {
+				progress.value = data.progress
+				if (data.file_url) {
+					fileUrl.value = data.file_url
+				}
+			})
+	}
+}
+
 const start = () => {
+	const token = localStorage.getItem('token')
+
 	loading.value = true
 	axios
-		.post('/api/files')
+		.post('/api/files', {}, {
+			headers: {
+				'Authorization': `Bearer ${token}`,
+			}
+		})
 		.then(response => {
 			loading.value = false
-			uploadedFiles.value = response.data
+			showProgressBar.value = true
 		})
 		.catch(error => {
 			loading.value = false
@@ -25,6 +64,10 @@ const start = () => {
 const reset = () => {
 	fileUrl.value = null
 }
+
+onBeforeMount(() => {
+	initSocket()
+})
 
 </script>
 
@@ -43,17 +86,13 @@ const reset = () => {
             </v-col>
         </v-row>
 
-        <v-row>
+        <v-row v-if="showProgressBar">
             <v-col>
                 <v-progress-linear
                     v-model="progress"
                     color="green"
                     height="25"
-                >
-                    <template v-slot:default="{ value }">
-                        <strong>{{ Math.ceil(value) }}%</strong>
-                    </template>
-                </v-progress-linear>
+                />
             </v-col>
         </v-row>
 
