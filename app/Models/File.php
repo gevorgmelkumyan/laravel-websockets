@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $total
  * @property int $generated
  *
+ * @property string $url
+ *
  * @property User $user
  */
 class File extends Model {

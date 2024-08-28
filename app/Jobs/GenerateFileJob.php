@@ -42,7 +42,7 @@ class GenerateFileJob implements ShouldQueue {
 
 		$header = ['id', 'name', 'email', 'date'];
 
-		$fp = fopen(storage_path('app/' . $this->file->path), 'w');
+		$fp = fopen(storage_path('app/public/' . $this->file->path), 'w');
 		fputcsv($fp, $header);
 
 		while ($generated < $total) {

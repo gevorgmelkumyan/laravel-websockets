@@ -34,6 +34,14 @@ const initSocket = () => {
 		channel = echo
 			.private('lw.' + JSON.parse(localStorage.getItem('user')).id)
 			.listen('.file-updated-event', (data) => {
+				if (showProgressBar.value === false) {
+					showProgressBar.value = true
+				}
+
+				if (disableStart.value === false) {
+					disableStart.value = true
+				}
+
 				progress.value = Math.ceil((data.file.generated / data.file.total) * 100)
 				if (data.file.url) {
 					fileUrl.value = data.file.url

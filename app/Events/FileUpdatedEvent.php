@@ -23,6 +23,17 @@ class FileUpdatedEvent implements ShouldBroadcastNow {
 		$this->file = $file;
 	}
 
+	public function broadcastWith(): array {
+		return [
+			'file' => [
+				'total' => $this->file->total,
+				'generated' => $this->file->generated,
+				'url' => $this->file->url,
+			],
+			'user_id' => $this->userId,
+		];
+	}
+
 	public function broadcastOn() {
 		return new PrivateChannel("lw.$this->userId");
 	}
