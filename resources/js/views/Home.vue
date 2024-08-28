@@ -112,7 +112,7 @@ onBeforeMount(() => {
 
 	    <v-row v-if="fileUrl">
 		    <v-col cols="12">
-			    <p class="mt-4">File URL: {{ fileUrl }}</p>
+			    <a :href="fileUrl" target="_blank">Download File</a>
 		    </v-col>
 	    </v-row>
     </v-container>
